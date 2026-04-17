@@ -55,7 +55,7 @@ async def recommend(request: RecommendRequest):
     # Rule 3: must respond within 5 seconds
     try:
         result = await asyncio.wait_for(
-            asyncio.to_thread(get_recommendation, request.preferences, history_names),
+            asyncio.to_thread(get_recommendation, request.preferences, history_names, list(history_ids)),
             timeout=TIMEOUT_SECONDS,
         )
     except asyncio.TimeoutError:

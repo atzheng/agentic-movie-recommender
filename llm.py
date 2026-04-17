@@ -27,14 +27,16 @@ DATA_PATH = os.path.join(os.path.dirname(__file__), "tmdb_top1000_movies.csv")
 TOP_MOVIES = pd.read_csv(DATA_PATH).nlargest(5, "vote_count")
 
 
-def get_recommendation(preferences: str, history: list[str]) -> dict:
+def get_recommendation(preferences: str, history: list[str], history_ids: list[int] = []) -> dict:
     """Return a dict with keys 'tmdb_id' (int) and 'description' (str)."""
     movie_list = "\n".join(
         f'- tmdb_id={row.tmdb_id} | "{row.title}" ({row.year}) | genres: {row.genres} | overview: {row.overview[:200]}'
         for row in TOP_MOVIES.itertuples()
     )
     history_text = (
-        ", ".join(f'"{name}"' for name in history) if history else "none"
+        ", ".join(
+            f'"{name}" (tmdb_id={tid})' for name, tid in zip(history, history_ids)
+        ) if history else "none"
     )
     prompt = f"""You are a movie recommendation assistant.
 
